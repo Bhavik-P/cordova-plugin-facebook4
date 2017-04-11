@@ -92,6 +92,8 @@
         NSDictionary *params;
         double value;
 
+        NSLog(@"PRINTING LOG EVENT");
+        
         if ([command.arguments count] == 1) {
             [FBSDKAppEvents logEvent:eventName];
 
@@ -112,6 +114,41 @@
         res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
     }];
+}
+
+- (void)setUserID:(CDVInvokedUrlCommand *)command{
+  NSLog(@"PRINTING USER ID");
+  if ([command.arguments count] != 1) {
+      // Need only one param
+      CDVPluginResult *res = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Invalid arguments"];
+      [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
+      return;
+  }
+  CDVPluginResult *res;
+  NSString *userID = [command.arguments objectAtIndex:0];
+  [FBSDKAppEvents setUserID:(NSString *)userID];
+
+  res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+  [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
+}
+
+- (void)updateUserProperties:(CDVInvokedUrlCommand *)command{
+  NSLog(@"PRINTING USER PROPERTIES");
+  if ([command.arguments count] != 1) {
+      // Not enough arguments
+      CDVPluginResult *res = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Invalid arguments"];
+      [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
+      return;
+  }
+  
+  NSDictionary *params = [command.arguments objectAtIndex:0];
+  CDVPluginResult *res;
+  NSLog(@"PRINTING.....");
+
+  NSLog( @"%@", params );
+  [FBSDKAppEvents updateUserProperties:params handler:nil];
+  res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+  [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
 }
 
 - (void)logPurchase:(CDVInvokedUrlCommand *)command {
