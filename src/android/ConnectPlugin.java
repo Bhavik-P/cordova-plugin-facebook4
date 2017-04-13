@@ -781,19 +781,18 @@ public class ConnectPlugin extends CordovaPlugin {
           @Override
           public void onCompleted(GraphResponse graphResponse) {
               JSONObject jsonObj = graphResponse.getJSONObject();
-              try{
+              try {
                   boolean success = jsonObj.getBoolean("success");
-                  if(success){
+                  if(success) {
                       callbackContext.success();
-                  }else{
+                  } else {
                       callbackContext.error(jsonObj.getString("error"));
                   }
-              }catch(JSONException e){
+              } catch(JSONException e) {
                   callbackContext.error("Bad JSON Response");
               }
           }
       });
-
     }
         
     private void executeLogin(JSONArray args, CallbackContext callbackContext) throws JSONException {
