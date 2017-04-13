@@ -307,6 +307,16 @@ public class ConnectPlugin extends CordovaPlugin {
             executeLogEvent(args, callbackContext);
             return true;
 
+        } else if (action.equals("setUserID")) {
+            Log.w(TAG, "setUserId called");
+            executeSetUserID(args, callbackContext);
+            return true;
+
+        } else if (action.equals("updateUserProperties")) {
+            Log.w(TAG, "executeUpdateUserProperties called");
+            executeUpdateUserProperties(args, callbackContext);
+            return true;
+
         } else if (action.equals("logPurchase")) {
             /*
              * While calls to logEvent can be made to register purchase events,
@@ -725,6 +735,53 @@ public class ConnectPlugin extends CordovaPlugin {
         }
     }
 
+    private void executeSetUserID(JSONArray args, CallbackContext callbackContext) throws JSONException {
+      if (args.length() != 1) {
+          // Not enough parameters
+          callbackContext.error("Invalid arguments");
+          return;
+      }
+
+      String userID = args.getString(0);
+      logger.setUserID(userID);
+      callbackContext.success();
+      return;
+    }
+    
+    private void executeUpdateUserProperties(JSONArray args, CallbackContext callbackContext) throws JSONException {
+      if (args.length() != 1) {
+          // Not enough parameters
+          callbackContext.error("Invalid arguments");
+          return;
+      }
+
+      JSONObject params = args.getJSONObject(0);
+      Bundle parameters = new Bundle();
+      Iterator<String> iter = params.keys();
+
+      while (iter.hasNext()) {
+          String key = iter.next();
+          try {
+              // Try get a String
+              String value = params.getString(key);
+              parameters.putString(key, value);
+          } catch (JSONException e) {
+              // Maybe it was an int
+              Log.w(TAG, "Type in AppEvent parameters was not String for key: " + key);
+              try {
+                  int value = params.getInt(key);
+                  parameters.putInt(key, value);
+              } catch (JSONException e2) {
+                  // Nope
+                  Log.e(TAG, "Unsupported type in AppEvent parameters for key: " + key);
+              }
+          }
+      }
+      
+      logger.updateUserProperties(parameters, null);
+      callbackContext.success();
+    }
+        
     private void executeLogin(JSONArray args, CallbackContext callbackContext) throws JSONException {
         Log.d(TAG, "login FB");
         // Get the permissions
