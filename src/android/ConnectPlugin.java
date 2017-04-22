@@ -790,7 +790,9 @@ public class ConnectPlugin extends CordovaPlugin {
                   }
               } catch(JSONException e) {
                   callbackContext.error("Bad JSON Response");
-              }
+              } catch(Exception e){
+                  callbackContext.error("Error: " + e.getMessage());
+              }               
           }
       });
     }
